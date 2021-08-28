@@ -1,8 +1,6 @@
 const db = require ('./db/connection');
 const inquirer = require('inquirer');
 
-init ();
-
 function init(){
     startPrompt();
 }
@@ -17,28 +15,28 @@ function startPrompt(){
         }
     ]).then(response => {
         switch (response.choices) {
-            case value: "View All Departments"
+            case "View All Departments" :
                 viewAllDepartments()
                 break;
-            case value: "Add a Department"
+            case "Add a Department":
                 addDepartment()
                 break;
-            case value: "View All Roles"
+            case "View All Roles":
                 viewAllRoles ()
                 break;
-            case value: "Add a Role"
+            case "Add a Role":
                 addRole()
                 break;
-            case value: "View All Employees"
+            case "View All Employees":
                 viewAllEmployees()
                 break;
-            case value: "Add an Employee"
+            case "Add an Employee":
                 addEmployee()
                 break;
-            case value: "Update an Employee Role"
+            case "Update an Employee Role":
                 updateEmployeeRole()
                 break;
-            default: "Quit"
+            default: 
                 quit()
                 break;
         }
@@ -53,13 +51,32 @@ function startPrompt(){
 function viewAllDepartments(){
     db.query('SELECT * FROM department', function (err, results){
         console.table(results);
-    })
+    }).then(() => startPrompt());
 }
 
 function viewAllEmployees(){
     db.query('SELECT * FROM employee', function (err, results){
         console.table(results);
+    }).then(() => startPrompt());
+}
+
+function viewAllRoles() {
+    db.query('SELECT * FROM role', function (err, results){
+        console.table(results);
+    }).then(() => startPrompt());
+}
+
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the new department?",
+            name: "departmentName"
+        }
+    ]).then(response =>{
+        db.addDepartment(response);
     })
 }
 
-viewAllEmployees()
+init ();
+
