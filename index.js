@@ -1,15 +1,48 @@
 const db = require ('./db/connection');
 const inquirer = require('inquirer');
 
+init ();
+
+function init(){
+    startPrompt();
+}
+
 function startPrompt(){
     inquirer.prompt ([
         {
             type: "list",
             message: "What would you like to do?",
             name: "initialPrompt",
-            choices: ["View All Departments","Add a Department", "View All Roles", "Add a Role", "View All Employees", "Add an Employee", "Update an Employee Role"]
+            choices: ["View All Departments","Add a Department", "View All Roles", "Add a Role", "View All Employees", "Add an Employee", "Update an Employee Role", "Quit"]
         }
-    ])
+    ]).then(response => {
+        switch (response.choices) {
+            case value: "View All Departments"
+                viewAllDepartments()
+                break;
+            case value: "Add a Department"
+                addDepartment()
+                break;
+            case value: "View All Roles"
+                viewAllRoles ()
+                break;
+            case value: "Add a Role"
+                addRole()
+                break;
+            case value: "View All Employees"
+                viewAllEmployees()
+                break;
+            case value: "Add an Employee"
+                addEmployee()
+                break;
+            case value: "Update an Employee Role"
+                updateEmployeeRole()
+                break;
+            default: "Quit"
+                quit()
+                break;
+        }
+    })
 
 }
 //Inquirer to list out options: view all employees, view all departments, etc.
@@ -17,6 +50,11 @@ function startPrompt(){
 //call  and execute the appropriate function
 //meaning for each one of the options, you need to create a function for each of them.
 
+function viewAllDepartments(){
+    db.query('SELECT * FROM department', function (err, results){
+        console.table(results);
+    })
+}
 
 function viewAllEmployees(){
     db.query('SELECT * FROM employee', function (err, results){
