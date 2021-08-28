@@ -14,7 +14,8 @@ function startPrompt(){
             choices: ["View All Departments","Add a Department", "View All Roles", "Add a Role", "View All Employees", "Add an Employee", "Update an Employee Role", "Quit"]
         }
     ]).then(response => {
-        switch (response.choices) {
+        console.log(response)
+        switch (response.initialPrompt) {
             case "View All Departments" :
                 viewAllDepartments()
                 break;
@@ -37,7 +38,7 @@ function startPrompt(){
                 updateEmployeeRole()
                 break;
             default: 
-                quit()
+                console.log("bye bye")
                 break;
         }
     })
@@ -74,7 +75,12 @@ function addDepartment() {
             name: "departmentName"
         }
     ]).then(response =>{
-        db.addDepartment(response);
+        db.query('INSERT INTO department SET ?',response.departmentName, function (err, results){
+            if(err) {
+                console.log(err)
+            }
+            console.table(results);
+        }).then(() => startPrompt());
     })
 }
 
