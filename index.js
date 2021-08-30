@@ -1,29 +1,46 @@
-const db = require ('./db/connection');
+const db = require('./db/connection');
 const inquirer = require('inquirer');
 
-function init(){
+function init() {
     startPrompt();
 }
 
-function startPrompt(){
-    inquirer.prompt ([
+function whatsNext() {
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "What would you like to do next?",
+            name: "next",
+            choices: ["go back", "quit"]
+        }
+    ]).then(response => {
+        if (response.next == "go back") {
+            startPrompt();
+        } else {
+            quit();
+        }
+    })
+}
+
+function startPrompt() {
+    inquirer.prompt([
         {
             type: "list",
             message: "What would you like to do?",
             name: "initialPrompt",
-            choices: ["View All Departments","Add a Department", "View All Roles", "Add a Role", "View All Employees", "Add an Employee", "Update an Employee Role", "Quit"]
+            choices: ["View All Departments", "Add a Department", "View All Roles", "Add a Role", "View All Employees", "Add an Employee", "Update an Employee Role", "Quit"]
         }
     ]).then(response => {
         console.log(response)
         switch (response.initialPrompt) {
-            case "View All Departments" :
+            case "View All Departments":
                 viewAllDepartments()
                 break;
             case "Add a Department":
                 addDepartment()
                 break;
             case "View All Roles":
-                viewAllRoles ()
+                viewAllRoles()
                 break;
             case "Add a Role":
                 addRole()
@@ -37,9 +54,11 @@ function startPrompt(){
             case "Update an Employee Role":
                 updateEmployeeRole()
                 break;
-            default: 
-                console.log("bye bye")
+            case "Quit":
+                quit();
                 break;
+            default:
+                quit();
         }
     })
 
@@ -49,22 +68,54 @@ function startPrompt(){
 //call  and execute the appropriate function
 //meaning for each one of the options, you need to create a function for each of them.
 
-function viewAllDepartments(){
-    db.query('SELECT * FROM department', function (err, results){
+function viewAllDepartments() {
+    db.query('SELECT * FROM department', function (err, results) {
         console.table(results);
-    }).then(() => startPrompt());
+        whatsNext();
+    })
 }
 
-function viewAllEmployees(){
-    db.query('SELECT * FROM employee', function (err, results){
+function viewAllEmployees() {
+    db.query('SELECT * FROM employee', function (err, results) {
         console.table(results);
-    }).then(() => startPrompt());
+        whatsNext();
+    })
 }
 
 function viewAllRoles() {
-    db.query('SELECT * FROM role', function (err, results){
+    db.query('SELECT * FROM role', function (err, results) {
         console.table(results);
-    }).then(() => startPrompt());
+        whatsNext();
+    })
+}
+
+function addRole() {
+    db.query('SELECT COUNT(*) FROM role', function (err, result) {
+        console.log(result);
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is role title?",
+                name: "title"
+            },
+            {
+                type: "input",
+                message: "What is the salary for this role?",
+                name: "salary"
+            },
+            {
+                type: "list",
+                message: "Pick department",
+                name: "department_id",
+                choices: departmentIds
+            }
+        ]).then(response => {
+            db.query('INSERT INTO role (title, salary, department_id VALUES (?,?,?)', [response.title, response.salary, response.department_id], function (err, results) {
+                console.table(results);
+            })
+        })
+    })
+
 }
 
 function addDepartment() {
@@ -74,15 +125,48 @@ function addDepartment() {
             message: "What is the name of the new department?",
             name: "departmentName"
         }
-    ]).then(response =>{
-        db.query('INSERT INTO department SET ?',response.departmentName, function (err, results){
-            if(err) {
-                console.log(err)
-            }
+    ]).then(response => {
+        db.query('INSERT INTO department (name) VALUES (?)', response.departmentName, function (err, results) {
             console.table(results);
-        }).then(() => startPrompt());
+            viewAllDepartments();
+            startPrompt();
+        })
     })
 }
 
-init ();
+function addEmployee(){
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the employee's first name?",
+            name: "first_name"
+        },
+        {
+            type: "input",
+            message: "What is the employee's last name?",
+            name: "last_name"
+        },
+        {
+            type: "input",
+            message: "What is the employee's title?",
+            name: "role_id"
+        },
+        {
+            type: "input",
+            message: "Who is the employee's manager (use value 1-9 for the manager's?",
+            name: "manager_id"
+        }
+    ]).then(response =>{
+        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', response.first_name, response.last_name, response.role_id, reponse.manager_id, function (err, results){
+            console.table(results);
 
+        })
+    })
+}
+
+function quit() {
+    console.log("Goodbye!");
+    process.exit();
+}
+
+init();

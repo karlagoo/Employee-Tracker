@@ -18,5 +18,6 @@ db.connect();
 
 db.query = util.promisify(db.query);
 
+
 module.exports = db;
 
