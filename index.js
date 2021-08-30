@@ -1,9 +1,11 @@
 const db = require('./db/connection');
 const inquirer = require('inquirer');
+const gradient = require('gradient-string');
 
 function init() {
     startPrompt();
 }
+console.log(gradient.rainbow('Employee Manager'));
 
 function whatsNext() {
     inquirer.prompt([
@@ -163,7 +165,7 @@ function addEmployee(){
 function updateEmployeeRole(){
     inquirer.prompt([
         {
-            
+
         }
     ])
 }
