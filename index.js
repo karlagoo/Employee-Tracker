@@ -63,10 +63,6 @@ function startPrompt() {
     })
 
 }
-//Inquirer to list out options: view all employees, view all departments, etc.
-//Depending on which option user chooses
-//call  and execute the appropriate function
-//meaning for each one of the options, you need to create a function for each of them.
 
 function viewAllDepartments() {
     db.query('SELECT * FROM department', function (err, results) {
@@ -162,6 +158,14 @@ function addEmployee(){
 
         })
     })
+}
+
+function updateEmployeeRole(){
+    inquirer.prompt([
+        {
+            
+        }
+    ])
 }
 
 function quit() {
