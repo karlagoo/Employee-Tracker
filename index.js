@@ -133,41 +133,55 @@ function addDepartment() {
 }
 
 function addEmployee(){
-    inquirer.prompt([
-        {
-            type: "input",
-            message: "What is the employee's first name?",
-            name: "first_name"
-        },
-        {
-            type: "input",
-            message: "What is the employee's last name?",
-            name: "last_name"
-        },
-        {
-            type: "input",
-            message: "What is the employee's title?",
-            name: "role_id"
-        },
-        {
-            type: "input",
-            message: "Who is the employee's manager (use value 1-9 for the manager's?",
-            name: "manager_id"
-        }
-    ]).then(response =>{
-        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', response.first_name, response.last_name, response.role_id, reponse.manager_id, function (err, results){
-            console.table(results);
-
+    db.query('SELECT * FROM employee WHERE manager_id IS NULL',(err, results) => {
+        //console.log(results)
+        const managerArr = [];
+        results.map(managerEl => {
+            managerArr.push("ID: " + managerEl.id + " - Name: " + managerEl.first_name + " " + managerEl.last_name)
         })
+        console.log(managerArr)
+       // db.query
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is the employee's first name?",
+                name: "first_name"
+            },
+            {
+                type: "input",
+                message: "What is the employee's last name?",
+                name: "last_name"
+            },
+            {
+                type: "input",
+                message: "What is the employee's title?",
+                name: "role_id"
+            },
+            {
+                type: "list",
+                message: "Who is the employee's manager?",
+                name: "manager_id",
+                choices: managerArr
+            }
+        ]).then(response =>{
+            console.log(response)
+            const managerId = parseInt(response.manager_id.split(" ")[1]);
+            console.log(managerId)
+
+            db.query('INSERT INTO employee SET ?',{first_name: response.first_name, last_name: response.last_name, role_id: response.role_id, manager_id:managerId}, function (err, results){
+                //console.table(results);
+            })
+        }) 
     })
+    
 }
 
 function updateEmployeeRole(){
-    inquirer.prompt([
-        {
+    // inquirer.prompt([
+    //     {
 
-        }
-    ])
+    //     }
+    // ])
 }
 
 function quit() {

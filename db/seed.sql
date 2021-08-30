@@ -25,3 +25,9 @@ INSERT INTO employee
 VALUES
 ('Jack', 'Daniels', 2, NULL),
 ('Jill', 'Hill', 1, 1),
+('Benito', 'Martinez', 4, NULL),
+('Pablo', 'Escobar', 3, 3),
+('Karla', 'Goo', 6, NULL),
+('Sharon', 'Guan', 5, 5),
+('Steven', 'Smith', 8, NULL),
+('Carol', 'Gomez', 7, 7);
